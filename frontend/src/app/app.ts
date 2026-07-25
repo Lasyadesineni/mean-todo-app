@@ -1,4 +1,4 @@
-import { Component, OnInit, inject, signal } from '@angular/core';
+import { Component, OnInit, inject, signal, computed } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
@@ -25,9 +25,14 @@ export class App implements OnInit {
   editingTodoId = signal<string | null>(null);
   editingTitle = signal<string>('');
 
+  // Computed stats for UI badges
+  completedCount = computed(() => this.todos().filter(t => t.completed).length);
+  totalCount = computed(() => this.todos().length);
+
   ngOnInit() {
     this.fetchTodos();
   }
+
 
   // READ: Fetch all todos
   fetchTodos() {

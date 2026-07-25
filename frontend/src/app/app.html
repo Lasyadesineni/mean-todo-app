@@ -1,55 +1,95 @@
-<main class="container">
-  <h1>MEAN Todo List</h1>
+<div class="app-wrapper">
+  <main class="container">
+    
+    <!-- Header Section -->
+    <header class="app-header">
+      <div class="header-title">
+        <span class="icon-badge">✨</span>
+        <h1>Task Master</h1>
+      </div>
+      <p class="subtitle">MEAN Stack Todo Application</p>
 
-  <!-- Create Todo Form -->
-  <form (ngSubmit)="addTodo()" class="add-form">
-    <input 
-      type="text" 
-      [ngModel]="newTodoTitle()" 
-      (ngModelChange)="newTodoTitle.set($event)"
-      name="newTodoTitle" 
-      placeholder="What needs to be done?" 
-      required
-    />
-    <button type="submit">Add Task</button>
-  </form>
+      <!-- Task Stats Bar -->
+      <div class="stats-bar" *ngIf="totalCount() > 0">
+        <span class="badge total">Total: {{ totalCount() }}</span>
+        <span class="badge completed">Done: {{ completedCount() }} / {{ totalCount() }}</span>
+      </div>
+    </header>
 
-  <!-- Todo List -->
-  <ul class="todo-list">
-    <li *ngFor="let todo of todos()" [class.completed]="todo.completed">
-      
-      <!-- Normal View Mode -->
-      <ng-container *ngIf="editingTodoId() !== todo._id; else editMode">
-        <input 
-          type="checkbox" 
-          [checked]="todo.completed" 
-          (change)="toggleTodo(todo)" 
-        />
-        <span class="todo-title" (dblclick)="startEditing(todo)">{{ todo.title }}</span>
-        
-        <div class="actions">
-          <button class="btn-edit" (click)="startEditing(todo)">Edit</button>
-          <button class="btn-delete" (click)="deleteTodo(todo._id)">Delete</button>
-        </div>
-      </ng-container>
-
-      <!-- Edit Mode -->
-      <ng-template #editMode>
+    <!-- Create Todo Form -->
+    <form (ngSubmit)="addTodo()" class="add-form">
+      <div class="input-group">
         <input 
           type="text" 
-          [ngModel]="editingTitle()" 
-          (ngModelChange)="editingTitle.set($event)"
-          class="edit-input" 
-          name="editingTitle"
+          [ngModel]="newTodoTitle()" 
+          (ngModelChange)="newTodoTitle.set($event)"
+          name="newTodoTitle" 
+          placeholder="Add a new task..." 
+          required
         />
-        <div class="actions">
-          <button class="btn-save" (click)="saveEdit(todo)">Save</button>
-          <button class="btn-cancel" (click)="cancelEdit()">Cancel</button>
-        </div>
-      </ng-template>
+        <button type="submit" class="btn-add">
+          <span>+ Add</span>
+        </button>
+      </div>
+    </form>
 
-    </li>
-  </ul>
+    <!-- Todo List -->
+    <ul class="todo-list">
+      <li *ngFor="let todo of todos()" [class.completed]="todo.completed" class="todo-card">
+        
+        <!-- Normal View Mode -->
+        <ng-container *ngIf="editingTodoId() !== todo._id; else editMode">
+          <label class="custom-checkbox">
+            <input 
+              type="checkbox" 
+              [checked]="todo.completed" 
+              (change)="toggleTodo(todo)" 
+            />
+            <span class="checkmark"></span>
+          </label>
+          
+          <span class="todo-title" (dblclick)="startEditing(todo)" title="Double click to edit">
+            {{ todo.title }}
+          </span>
+          
+          <div class="actions">
+            <button class="btn-action edit" (click)="startEditing(todo)" title="Edit">
+              ✏️ Edit
+            </button>
+            <button class="btn-action delete" (click)="deleteTodo(todo._id)" title="Delete">
+              🗑️ Delete
+            </button>
+          </div>
+        </ng-container>
 
-  <p *ngIf="todos().length === 0" class="empty-state">No todos yet! Add one above.</p>
-</main>
+        <!-- Edit Mode -->
+        <ng-template #editMode>
+          <div class="edit-wrapper">
+            <input 
+              type="text" 
+              [ngModel]="editingTitle()" 
+              (ngModelChange)="editingTitle.set($event)"
+              class="edit-input" 
+              name="editingTitle"
+              (keyup.enter)="saveEdit(todo)"
+              (keyup.escape)="cancelEdit()"
+            />
+            <div class="actions">
+              <button class="btn-action save" (click)="saveEdit(todo)">Save</button>
+              <button class="btn-action cancel" (click)="cancelEdit()">Cancel</button>
+            </div>
+          </div>
+        </ng-template>
+
+      </li>
+    </ul>
+
+    <!-- Empty State -->
+    <div *ngIf="todos().length === 0" class="empty-state">
+      <div class="empty-icon">📌</div>
+      <p>Your task list is empty!</p>
+      <span>Type a task above and press <strong>Add</strong> to get started.</span>
+    </div>
+
+  </main>
+</div>
