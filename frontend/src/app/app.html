@@ -1,0 +1,55 @@
+<main class="container">
+  <h1>MEAN Todo List</h1>
+
+  <!-- Create Todo Form -->
+  <form (ngSubmit)="addTodo()" class="add-form">
+    <input 
+      type="text" 
+      [ngModel]="newTodoTitle()" 
+      (ngModelChange)="newTodoTitle.set($event)"
+      name="newTodoTitle" 
+      placeholder="What needs to be done?" 
+      required
+    />
+    <button type="submit">Add Task</button>
+  </form>
+
+  <!-- Todo List -->
+  <ul class="todo-list">
+    <li *ngFor="let todo of todos()" [class.completed]="todo.completed">
+      
+      <!-- Normal View Mode -->
+      <ng-container *ngIf="editingTodoId() !== todo._id; else editMode">
+        <input 
+          type="checkbox" 
+          [checked]="todo.completed" 
+          (change)="toggleTodo(todo)" 
+        />
+        <span class="todo-title" (dblclick)="startEditing(todo)">{{ todo.title }}</span>
+        
+        <div class="actions">
+          <button class="btn-edit" (click)="startEditing(todo)">Edit</button>
+          <button class="btn-delete" (click)="deleteTodo(todo._id)">Delete</button>
+        </div>
+      </ng-container>
+
+      <!-- Edit Mode -->
+      <ng-template #editMode>
+        <input 
+          type="text" 
+          [ngModel]="editingTitle()" 
+          (ngModelChange)="editingTitle.set($event)"
+          class="edit-input" 
+          name="editingTitle"
+        />
+        <div class="actions">
+          <button class="btn-save" (click)="saveEdit(todo)">Save</button>
+          <button class="btn-cancel" (click)="cancelEdit()">Cancel</button>
+        </div>
+      </ng-template>
+
+    </li>
+  </ul>
+
+  <p *ngIf="todos().length === 0" class="empty-state">No todos yet! Add one above.</p>
+</main>
